@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import BannerSlideshow from '@/components/store/BannerSlideshow';
 import OffersCarousel from '@/components/store/OffersCarousel';
 import ProductCard from '@/components/store/ProductCard';
 import { Store } from 'lucide-react';
@@ -90,9 +91,13 @@ export default function StorePage() {
         </div>
       </header>
 
-      <main className="py-8 lg:py-12 space-y-12">
+      <main className="space-y-12">
+        <section className="px-4 lg:px-8 pt-8 lg:pt-12">
+          <BannerSlideshow />
+        </section>
+
         {settings?.show_offers && (
-          <section>
+          <section className="py-8 lg:py-12">
             <OffersCarousel />
           </section>
         )}

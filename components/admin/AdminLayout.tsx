@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { getUser, signOut } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
-import { Store, Package, Tag, Palette, LogOut, LayoutDashboard, Menu, X } from 'lucide-react';
+import { Store, Package, Tag, Palette, LogOut, LayoutDashboard, Menu, X, Image } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -48,6 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const menuItems = [
     { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/admin/banners', icon: Image, label: 'Banners' },
     { href: '/admin/products', icon: Package, label: 'Produtos' },
     { href: '/admin/offers', icon: Tag, label: 'Ofertas' },
     { href: '/admin/settings', icon: Palette, label: 'Personalização' },
