@@ -2,7 +2,7 @@ import React from 'react'
 import { Header } from '../components/Header'
 import { Button } from '../components/ui/Button'
 import { Alert } from '../components/ui/Alert'
-import { CheckCircle } from 'lucide-react'
+import { CircleCheck as CheckCircle } from 'lucide-react'
 
 export function Success() {
   return (
