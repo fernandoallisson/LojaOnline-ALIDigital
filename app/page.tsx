@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import BannerSlideshow from '@/components/store/BannerSlideshow';
 import OffersCarousel from '@/components/store/OffersCarousel';
 import ProductCard from '@/components/store/ProductCard';
+import CategoriesBar from '@/components/store/CategoriesBar';
 import { Store } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -90,6 +91,8 @@ export default function StorePage() {
           </div>
         </div>
       </header>
+
+      <CategoriesBar />
 
       <main className="space-y-12">
         <section className="px-4 lg:px-8 pt-8 lg:pt-12">

@@ -37,6 +37,21 @@ export type Database = {
         Insert: Omit<Database['public']['Tables']['offers']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['offers']['Insert']>;
       };
+      categories: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+          icon: string;
+          color: string;
+          active: boolean;
+          order_position: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['categories']['Row'], 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Database['public']['Tables']['categories']['Insert']>;
+      };
       store_settings: {
         Row: {
           id: string;
