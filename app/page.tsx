@@ -6,9 +6,8 @@ import BannerSlideshow from '@/components/store/BannerSlideshow';
 import OffersCarousel from '@/components/store/OffersCarousel';
 import ProductCard from '@/components/store/ProductCard';
 import CategoriesBar from '@/components/store/CategoriesBar';
+import StoreHeader from '@/components/store/StoreHeader';
 import { Store } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 
 type Product = {
   id: string;
@@ -66,31 +65,11 @@ export default function StorePage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: neutralColor }}>
-      <header className="sticky top-0 z-50 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-                style={{ backgroundColor: primaryColor }}
-              >
-                <Store className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold" style={{ color: primaryColor }}>
-                  {storeName}
-                </h1>
-                <p className="text-sm text-slate-600">{storeDescription}</p>
-              </div>
-            </div>
-            <Link href="/admin/login">
-              <Button variant="outline" size="sm">
-                Admin
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <StoreHeader
+        storeName={storeName}
+        storeDescription={storeDescription}
+        primaryColor={primaryColor}
+      />
 
       <CategoriesBar />
 

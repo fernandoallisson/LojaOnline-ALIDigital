@@ -3,8 +3,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
 type Product = {
   id: string;
@@ -23,31 +24,13 @@ type ProductCardProps = {
 };
 
 export default function ProductCard({ product, primaryColor, secondaryColor }: ProductCardProps) {
-  const [loading, setLoading] = useState(false);
+  const { addItem } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
 
-  const handleCheckout = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          productId: product.id,
-          productName: product.name,
-          price: product.price,
-        }),
-      });
-
-      const { url } = await response.json();
-      if (url) {
-        window.location.href = url;
-      }
-    } catch (error) {
-      console.error('Erro ao criar checkout:', error);
-      setLoading(false);
-    }
+  const handleAddToCart = () => {
+    addItem(product.id, product.name, product.image_url, product.price, 1);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
   };
 
   return (
@@ -99,19 +82,32 @@ export default function ProductCard({ product, primaryColor, secondaryColor }: P
           <Button
             className="w-full h-12 text-base font-medium transition-colors"
             style={{
-              backgroundColor: primaryColor,
+              backgroundColor: isAdded ? '#10b981' : primaryColor,
             }}
-            onClick={handleCheckout}
-            disabled={product.stock === 0 || loading}
+            onClick={handleAddToCart}
+            disabled={product.stock === 0}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = secondaryColor;
+              if (!isAdded && product.stock > 0) {
+                e.currentTarget.style.backgroundColor = secondaryColor;
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = primaryColor;
+              if (!isAdded && product.stock > 0) {
+                e.currentTarget.style.backgroundColor = primaryColor;
+              }
             }}
           >
-            <ShoppingCart className="w-5 h-5 mr-2" />
-            {loading ? 'Processando...' : product.stock === 0 ? 'Esgotado' : 'Comprar Agora'}
+            {isAdded ? (
+              <>
+                <Check className="w-5 h-5 mr-2" />
+                Adicionado!
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="w-5 h-5 mr-2" />
+                {product.stock === 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}
+              </>
+            )}
           </Button>
         </div>
       </CardContent>
