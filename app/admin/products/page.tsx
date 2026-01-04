@@ -23,8 +23,15 @@ type Product = {
   active: boolean;
 };
 
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -39,12 +46,16 @@ export default function ProductsPage() {
   });
 
   useEffect(() => {
-    loadProducts();
+    loadData();
   }, []);
 
-  const loadProducts = async () => {
-    const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-    setProducts(data || []);
+  const loadData = async () => {
+    const [productsRes, categoriesRes] = await Promise.all([
+      supabase.from('products').select('*').order('created_at', { ascending: false }),
+      supabase.from('categories').select('id, name, slug').eq('active', true).order('order_position', { ascending: true }),
+    ]);
+    setProducts(productsRes.data || []);
+    setCategories(categoriesRes.data || []);
     setLoading(false);
   };
 
@@ -69,7 +80,7 @@ export default function ProductsPage() {
 
     setDialogOpen(false);
     resetForm();
-    loadProducts();
+    loadData();
   };
 
   const handleEdit = (product: Product) => {
@@ -89,7 +100,7 @@ export default function ProductsPage() {
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir este produto?')) {
       await supabase.from('products').delete().eq('id', id);
-      loadProducts();
+      loadData();
     }
   };
 
@@ -150,12 +161,23 @@ export default function ProductsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="category">Categoria</Label>
-                    <Input
+                    <select
                       id="category"
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full h-10 px-3 py-2 border border-slate-200 rounded-md"
                       required
-                    />
+                    >
+                      <option value="">Selecione uma categoria</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.name}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                    {categories.length === 0 && (
+                      <p className="text-sm text-orange-600">Nenhuma categoria cadastrada. Crie uma categoria antes de adicionar produtos.</p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
