@@ -59,20 +59,32 @@ export default function OffersPage() {
     const offerData = {
       title: formData.title,
       image_url: formData.image_url,
-      product_id: formData.product_id || null,
+      product_id: formData.product_id ? formData.product_id : null,
       active: formData.active,
       order_position: editingOffer ? editingOffer.order_position : offers.length,
     };
 
-    if (editingOffer) {
-      await supabase.from('offers').update(offerData).eq('id', editingOffer.id);
-    } else {
-      await supabase.from('offers').insert([offerData]);
-    }
+    try {
+      if (editingOffer) {
+        const { error } = await supabase
+          .from('offers')
+          .update(offerData)
+          .eq('id', editingOffer.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('offers')
+          .insert([offerData]);
+        if (error) throw error;
+      }
 
-    setDialogOpen(false);
-    resetForm();
-    loadData();
+      setDialogOpen(false);
+      resetForm();
+      loadData();
+    } catch (error) {
+      console.error('Erro ao salvar oferta:', error);
+      alert('Erro ao salvar oferta. Verifique os dados e tente novamente.');
+    }
   };
 
   const handleEdit = (offer: Offer) => {
@@ -88,8 +100,14 @@ export default function OffersPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir esta oferta?')) {
-      await supabase.from('offers').delete().eq('id', id);
-      loadData();
+      try {
+        const { error } = await supabase.from('offers').delete().eq('id', id);
+        if (error) throw error;
+        loadData();
+      } catch (error) {
+        console.error('Erro ao deletar oferta:', error);
+        alert('Erro ao deletar oferta.');
+      }
     }
   };
 
@@ -98,20 +116,29 @@ export default function OffersPage() {
       return;
     }
 
-    const newOffers = [...offers];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    [newOffers[index], newOffers[targetIndex]] = [newOffers[targetIndex], newOffers[index]];
+    try {
+      const newOffers = [...offers];
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      [newOffers[index], newOffers[targetIndex]] = [newOffers[targetIndex], newOffers[index]];
 
-    const updates = newOffers.map((offer, i) => ({
-      id: offer.id,
-      order_position: i,
-    }));
+      const updates = newOffers.map((offer, i) => ({
+        id: offer.id,
+        order_position: i,
+      }));
 
-    for (const update of updates) {
-      await supabase.from('offers').update({ order_position: update.order_position }).eq('id', update.id);
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('offers')
+          .update({ order_position: update.order_position })
+          .eq('id', update.id);
+        if (error) throw error;
+      }
+
+      loadData();
+    } catch (error) {
+      console.error('Erro ao reordenar ofertas:', error);
+      alert('Erro ao reordenar ofertas.');
     }
-
-    loadData();
   };
 
   const resetForm = () => {
