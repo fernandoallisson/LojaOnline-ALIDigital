@@ -210,7 +210,6 @@ export default function OffersPage() {
                       <SelectValue placeholder="Selecione um produto" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Nenhum produto</SelectItem>
                       {products.map((product) => (
                         <SelectItem key={product.id} value={product.id}>
                           {product.name}
